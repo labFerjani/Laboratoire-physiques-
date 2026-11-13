@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10243a">
+  <meta name="description" content="LABO PHYSIQUE – FERJANI RAFIK : plateforme interactive d'enseignement de la physique.">
+  <title>LABO PHYSIQUE – FERJANI RAFIK</title>
+  <style>
+    :root {
+      --navy:#10243a; --blue:#1769aa; --cyan:#26a6b8; --ink:#203247;
+      --muted:#607286; --paper:#f4f7fb; --white:#fff; --line:#dce5ee;
+      --shadow:0 12px 32px rgba(16,36,58,.09);
+    }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; color:var(--ink); background:var(--paper); line-height:1.6; }
+    a { color:inherit; text-decoration:none; }
+    .topbar { background:var(--navy); color:#eaf4ff; padding:9px 5%; font-size:.88rem; text-align:center; }
+    header { background:#fff; position:sticky; top:0; z-index:10; box-shadow:0 2px 12px rgba(16,36,58,.07); }
+    .nav { max-width:1160px; margin:auto; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; gap:18px; }
+    .brand { display:flex; align-items:center; gap:12px; min-width:220px; }
+    .logo { width:46px; height:46px; border-radius:13px; background:linear-gradient(135deg,var(--blue),var(--cyan)); display:grid; place-items:center; color:#fff; font-weight:800; font-size:1.15rem; }
+    .brand strong { display:block; color:var(--navy); letter-spacing:.04em; font-size:1rem; }
+    .brand small { color:var(--muted); font-size:.78rem; }
+    nav { display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:6px; }
+    nav a { padding:8px 10px; border-radius:8px; color:#34495e; font-size:.9rem; font-weight:600; }
+    nav a:hover { background:#edf5fb; color:var(--blue); }
+    .hero { background:linear-gradient(120deg,#10243a 0%,#174e78 58%,#167f91 100%); color:#fff; padding:76px 22px 70px; }
+    .hero-inner { max-width:1100px; margin:auto; display:grid; grid-template-columns:1.35fr .8fr; gap:38px; align-items:center; }
+    .eyebrow { text-transform:uppercase; letter-spacing:.16em; color:#a9e7ee; font-size:.78rem; font-weight:700; }
+    h1 { font-size:clamp(2.2rem,5vw,4rem); line-height:1.08; margin:14px 0 18px; }
+    .hero p { color:#e0edf6; max-width:650px; font-size:1.08rem; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:26px; }
+    .btn { display:inline-block; padding:12px 18px; border-radius:9px; font-weight:700; background:#fff; color:var(--navy); }
+    .btn.secondary { background:transparent; border:1px solid rgba(255,255,255,.55); color:#fff; }
+    .hero-panel { background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.2); border-radius:18px; padding:25px; backdrop-filter:blur(4px); }
+    .hero-panel .symbol { font-size:3rem; color:#b9f1f1; font-weight:300; }
+    .hero-panel h2 { margin:5px 0 8px; font-size:1.25rem; }
+    .hero-panel p { font-size:.94rem; margin:0; }
+    main { max-width:1100px; margin:auto; padding:54px 22px 70px; }
+    .section-head { margin-bottom:24px; }
+    .section-head .kicker { color:var(--blue); text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; font-weight:800; }
+    h2.section-title { color:var(--navy); font-size:clamp(1.6rem,3vw,2.2rem); margin:5px 0 8px; }
+    .section-head p { color:var(--muted); margin:0; max-width:720px; }
+    .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .card { background:var(--white); border:1px solid var(--line); border-radius:15px; padding:22px; box-shadow:var(--shadow); }
+    .card-icon { width:44px; height:44px; display:grid; place-items:center; border-radius:12px; background:#eaf4fb; color:var(--blue); font-size:1.35rem; margin-bottom:14px; }
+    .card h3 { margin:0 0 8px; color:var(--navy); font-size:1.12rem; }
+    .card p { color:var(--muted); font-size:.94rem; margin:0 0 14px; }
+    .card a.more { color:var(--blue); font-weight:700; font-size:.9rem; }
+    .notice { margin-top:26px; border-left:4px solid var(--cyan); background:#eaf7f8; padding:15px 18px; border-radius:0 10px 10px 0; color:#315365; font-size:.92rem; }
+    .about { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:stretch; margin-top:54px; }
+    .about-box { background:#fff; border:1px solid var(--line); border-radius:15px; padding:25px; }
+    .about-box h2 { color:var(--navy); margin-top:0; }
+    .about-box p { color:var(--muted); }
+    .tag { display:inline-block; background:#edf5fb; color:#205d88; padding:6px 10px; border-radius:20px; font-size:.82rem; font-weight:700; margin:4px 4px 0 0; }
+    footer { background:var(--navy); color:#d9e6f0; padding:28px 22px; text-align:center; }
+    footer strong { color:#fff; }
+    footer p { margin:5px 0; font-size:.9rem; }
+    @media (max-width:800px) {
+      .nav { align-items:flex-start; flex-direction:column; }
+      nav { justify-content:flex-start; }
+      .hero-inner,.about { grid-template-columns:1fr; }
+      .hero { padding-top:52px; }
+      .grid { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width:520px) {
+      .grid { grid-template-columns:1fr; }
+      nav a { padding:7px 8px; font-size:.84rem; }
+      .brand { min-width:0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">Une plateforme pédagogique pour apprendre, expérimenter et comprendre la physique</div>
+  <header>
+    <div class="nav">
+      <a class="brand" href="#accueil" aria-label="Accueil">
+        <span class="logo">LP</span>
+        <span><strong>LABO PHYSIQUE</strong><small>FERJANI RAFIK</small></span>
+      </a>
+      <nav aria-label="Navigation principale">
+        <a href="#accueil">Accueil</a>
+        <a href="#cours">Cours</a>
+        <a href="#laboratoire">Laboratoire</a>
+        <a href="#exercices">Exercices</a>
+        <a href="#ressources">Ressources</a>
+        <a href="#apropos">À propos</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="accueil">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow">Explorer · Expérimenter · Comprendre</div>
+        <h1>La physique se comprend par l'expérience.</h1>
+        <p>Bienvenue sur <strong>LABO PHYSIQUE – FERJANI RAFIK</strong>, un espace pédagogique consacré à l'apprentissage de la physique à travers des cours, des exercices et des simulations interactives.</p>
+        <div class="actions">
+          <a class="btn" href="#laboratoire">Découvrir le laboratoire</a>
+          <a class="btn secondary" href="#cours">Consulter les cours</a>
+        </div>
+      </div>
+      <div class="hero-panel">
+        <div class="symbol">∑  →  ⚡</div>
+        <h2>Apprendre autrement</h2>
+        <p>Observer un phénomène, modifier les paramètres, réaliser une expérience virtuelle et interpréter les résultats.</p>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section id="cours">
+      <div class="section-head">
+        <div class="kicker">Apprendre</div>
+        <h2 class="section-title">Cours et notions essentielles</h2>
+        <p>Des supports structurés pour accompagner les apprentissages et consolider les connaissances en physique.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><div class="card-icon">⌁</div><h3>Électricité</h3><p>Circuits électriques, tension, intensité, dipôles et phénomènes électriques.</p><a class="more" href="#ressources">Consulter les ressources →</a></article>
+        <article class="card"><div class="card-icon">磁</div><h3>Magnétisme</h3><p>Champ magnétique, actions magnétiques et applications expérimentales.</p><a class="more" href="#ressources">Consulter les ressources →</a></article>
+        <article class="card"><div class="card-icon">〰</div><h3>Oscillations</h3><p>Étude des oscillations mécaniques et électriques, libres ou forcées.</p><a class="more" href="#ressources">Consulter les ressources →</a></article>
+      </div>
+    </section>
+
+    <section id="laboratoire" style="margin-top:54px">
+      <div class="section-head">
+        <div class="kicker">Expérimenter</div>
+        <h2 class="section-title">Laboratoire virtuel</h2>
+        <p>Des espaces destinés à accueillir progressivement les simulations interactives développées pour les activités expérimentales.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><div class="card-icon">⚡</div><h3>Électricité et circuits</h3><p>Montage de circuits, générateurs, composants et mesures électriques.</p><a class="more" href="#apropos">Simulation à intégrer prochainement</a></article>
+        <article class="card"><div class="card-icon">∿</div><h3>Oscillations électriques</h3><p>Étude des circuits RLC, des régimes libres et des oscillations forcées.</p><a class="more" href="#apropos">Simulation à intégrer prochainement</a></article>
+        <article class="card"><div class="card-icon">pH</div><h3>Chimie et pH-métrie</h3><p>Suivi du pH, exploitation des mesures et interprétation des courbes.</p><a class="more" href="#apropos">Simulation à intégrer prochainement</a></article>
+        <article class="card"><div class="card-icon">↔</div><h3>Forces et mécanique</h3><p>Visualisation des forces et étude des mouvements et des oscillations mécaniques.</p><a class="more" href="#apropos">Simulation à intégrer prochainement</a></article>
+        <article class="card"><div class="card-icon">N</div><h3>Électromagnétisme</h3><p>Expériences et visualisations autour des champs et des phénomènes magnétiques.</p><a class="more" href="#apropos">Simulation à intégrer prochainement</a></article>
+        <article class="card"><div class="card-icon">＋</div><h3>Autres simulations</h3><p>De nouveaux modules pourront être ajoutés au fur et à mesure des besoins pédagogiques.</p><a class="more" href="#apropos">Espace évolutif</a></article>
+      </div>
+      <div class="notice"><strong>Information :</strong> les rubriques de cette première version constituent la structure de la plateforme. Les simulations et les documents seront ajoutés progressivement ; les liens des modules seront activés lors de leur intégration.</div>
+    </section>
+
+    <section id="exercices" style="margin-top:54px">
+      <div class="section-head">
+        <div class="kicker">S'entraîner</div>
+        <h2 class="section-title">Exercices et évaluations</h2>
+        <p>Un espace pour proposer des activités d'application, des séries progressives et des évaluations formatives.</p>
+      </div>
+      <div class="grid">
+        <article class="card"><div class="card-icon">✎</div><h3>Séries d'exercices</h3><p>Des exercices classés par thème et par niveau de difficulté.</p></article>
+        <article class="card"><div class="card-icon">✓</div><h3>Quiz interactifs</h3><p>Des questions pour vérifier les connaissances et s'autoévaluer.</p></article>
+        <article class="card"><div class="card-icon">▤</div><h3>Devoirs et corrections</h3><p>Des sujets d'évaluation et des corrigés pour accompagner la révision.</p></article>
+      </div>
+    </section>
+
+    <section id="ressources" style="margin-top:54px">
+      <div class="section-head">
+        <div class="kicker">Télécharger et consulter</div>
+        <h2 class="section-title">Ressources pédagogiques</h2>
+        <p>Cette bibliothèque accueillera les fiches de cours, les documents PDF, les protocoles expérimentaux et les supports de révision.</p>
+      </div>
+      <div class="about-box">
+        <h2>Bibliothèque scientifique</h2>
+        <p>Les documents seront organisés par discipline, chapitre et niveau scolaire afin de faciliter leur consultation sur ordinateur, tablette, téléphone et vidéoprojecteur.</p>
+        <span class="tag">Cours PDF</span><span class="tag">Fiches méthodes</span><span class="tag">Protocoles expérimentaux</span><span class="tag">Corrections</span>
+      </div>
+    </section>
+
+    <section class="about" id="apropos">
+      <div class="about-box">
+        <div class="kicker">Présentation</div>
+        <h2>À propos de la plateforme</h2>
+        <p><strong>LABO PHYSIQUE – FERJANI RAFIK</strong> est une plateforme pédagogique évolutive visant à rendre l'enseignement de la physique plus concret, visuel et interactif.</p>
+        <p>Elle est conçue pour être enrichie progressivement par des ressources et des outils numériques adaptés aux activités de classe.</p>
+      </div>
+      <div class="about-box">
+        <div class="kicker">Conception pédagogique</div>
+        <h2>Ferjani Rafik</h2>
+        <p>Enseignant de physique – Institut pilote de Nabeul.</p>
+        <p><em>La physique se comprend.</em></p>
+        <span class="tag">Comprendre</span><span class="tag">Manipuler</span><span class="tag">Analyser</span><span class="tag">Conclure</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>LABO PHYSIQUE – FERJANI RAFIK</strong></p>
+    <p>Plateforme interactive d'enseignement de la physique</p>
+    <p>© 2026 – Tous droits réservés</p>
+  </footer>
+</body>
+</html>
