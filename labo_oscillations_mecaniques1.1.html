@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Labo physique – Ferjani Rafik – Oscillations mécaniques</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif;background:#eef2f7;color:#1b2433}
+header{background:#0d47a1;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+header h1{font-size:16px;margin:0}header b{letter-spacing:.5px}
+main{display:grid;gap:10px;padding:10px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:1000px){main{grid-template-columns:270px minmax(0,1fr);grid-template-areas:"l m" "l r" "b b"}.L{grid-area:l}.M{grid-area:m}.Rr{grid-area:r;columns:2 300px;column-gap:10px}.Rr .k{break-inside:avoid}.bottom{grid-area:b}}
+.bottom{display:grid;gap:10px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:1000px){.bottom{grid-template-columns:1fr 1fr}#cs{grid-column:1/-1}}
+.k{background:#fff;border:1px solid #cfd8e6;border-radius:8px;padding:8px;margin-bottom:10px}
+.k h2{font-size:12px;margin:0 0 6px;color:#0d47a1;text-transform:uppercase}
+.pr{display:grid;grid-template-columns:1fr 88px;gap:2px 6px;margin-bottom:6px}
+.pr label{font-size:12px;color:#5b667a}.pr input[type=range]{grid-column:1/-1;width:100%}
+button,select{background:#0d47a1;color:#fff;border:0;border-radius:6px;padding:8px 10px;margin:2px;font-weight:600;min-height:38px;cursor:pointer;font-size:12px}
+button.g{background:#546e7a}button.r{background:#c62828}button.v{background:#2e7d32}
+select{width:100%;margin:0}.w{overflow-x:auto}canvas{display:block;width:100%}#c1{min-width:940px}
+pre{white-space:pre-wrap;font:12px/1.45 ui-monospace,monospace;margin:4px 0}
+.o{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;margin:6px 0;align-items:center}
+.o input[type=number]{width:62px}
+</style></head><body>
+<header><h1>Oscillations mécaniques libres et forcées — laboratoire interactif</h1><b>LABO PHYSIQUE – FERJANI RAFIK</b></header>
+<main>
+<div class=L>
+ <div class=k><h2>Paramètres</h2><div id=ps></div>
+  <label><input type=radio name=md value=l checked> Oscillations libres (moteur arrêté)</label><br>
+  <label><input type=radio name=md value=f> Oscillations forcées (moteur ON)</label></div>
+ <div class=k><h2>Forces et animation</h2><div id=fc></div>
+  <button id=bsF>AFFICHER LES FORCES</button><button id=bhF class=g>MASQUER LES FORCES</button>
+  <div class=o><label>Échelle des forces (px/N) <input type=range id=fz min=1 max=30 step=.5 value=8></label>
+  <label>Vitesse d'animation ×<input type=range id=sp min=.1 max=5 step=.1 value=1></label></div></div>
+</div>
+<div class=M>
+ <div class=k><h2>Montage expérimental</h2><div class=w><canvas id=c1></canvas></div>
+  <button id=b1 class=v>▶ DÉMARRER</button><button id=b2>⏸ PAUSE</button><button id=b3>⏯ REPRENDRE</button><button id=b4 class=r>⏹ STOP</button><button id=b5 class=g>↺ RÉINITIALISER</button></div>
+</div>
+<div class=Rr>
+ <div class=k><h2>Expériences préconfigurées</h2><select id=ex><option value="">Choisir une expérience…</option>
+ <option value=0>1 – Libres non amorties (h = 0)</option><option value=1>2 – Libres amorties (pseudo-périodique)</option>
+ <option value=2>3 – Régime critique</option><option value=3>4 – Forcées, faible amortissement</option>
+ <option value=4>5 – Résonance</option><option value=5>6 – Déphasage entre F et v</option></select>
+ <button id=bR class=g>RESTAURER LES PARAMÈTRES INITIAUX</button></div>
+ <div class=k><h2>Résultats</h2><pre id=rs></pre></div>
+ <div class=k><h2>Déphasage</h2><button id=bph>CALCULER LE DÉPHASAGE ENTRE F ET v</button><pre id=ph></pre></div>
+ <div class=k><h2>Commandes</h2><button id=bO>OSCILLOGRAMMES</button><button id=bF>DIAGRAMME DE FRESNEL</button><button id=bD class=v>TÉLÉCHARGER LE SCHÉMA DU MONTAGE</button><button id=bDr class=v>TÉLÉCHARGER L'OSCILLOGRAPHE (cylindre)</button></div>
+</div>
+<div class=bottom>
+ <div class=k id=cs><h2>Oscillogrammes (enregistreur)</h2><canvas id=c2></canvas>
+  <div class=o><label><input type=checkbox id=ch0 checked> x(t)</label><label><input type=checkbox id=ch1 checked> v(t)</label><label><input type=checkbox id=ch2> F(t)</label><label><input type=checkbox id=ch3> Em(t)</label>
+  <label><input type=checkbox id=su> Superposer (échelles normalisées)</label><label><input type=checkbox id=pm checked> Régime permanent théorique (pointillés)</label></div>
+  <div class=o><label>Fenêtre (s) <input type=number id=tw value=10 min=1 max=120></label><label>Durée d'enregistrement (s) <input type=number id=du value=60 min=1 max=300></label>
+  <label>Échelle verticale ×<input type=range id=zm min=.5 max=5 step=.1 value=1></label></div>
+  <div class=o><label>Défilement <input type=range id=sc min=0 max=1 step=.001 value=1></label><label>Curseur temporel <input type=range id=cu min=0 max=1 step=.001 value=.5></label></div>
+  <pre id=cr></pre><button id=dsc class=v>TÉLÉCHARGER L'OSCILLOGRAMME (PNG)</button></div>
+ <div class=k id=cf><h2>DIAGRAMME DE FRESNEL DES FORCES — équation en x : Mx″ + hx′ + Kx = F(t)</h2><canvas id=c3></canvas>
+  <div class=o><label><input type=checkbox id=pj> Projections horizontales/verticales</label></div><button id=dfr class=v>TÉLÉCHARGER (PNG)</button></div>
+ <div class=k id=cf2><h2>DIAGRAMME DE FRESNEL — équation en v : M dv/dt + h v + K∫v dt = F(t)</h2><canvas id=c4></canvas><div class=o>Projections : même case que le diagramme en x.</div><button id=dfr2 class=v>TÉLÉCHARGER (PNG)</button></div>
+</div>
+</main>
+<script>
+const $=i=>document.getElementById(i),PI=Math.PI,DT=.001;
+const SP=[['M','Masse M','kg',.1,5,.05],['K','Raideur K','N/m',1,200,.5],['h','Frottement h','N·s/m',0,20,.05],['Fm','Amplitude Fm','N',0,20,.1],['w','Pulsation ω','rad/s',.5,40,.05],['x0','Élongation x₀','m',-.3,.3,.005],['v0','Vitesse v₀','m/s',-2,2,.01]];
+const B={M:1,K:20,h:0,Fm:2,w:3,x0:.15,v0:0},P={...B};
+const FC=[['Fr','Rappel −Kx','#d32f2f'],['f','Frottement −hv','#f57c00'],['F','Excitatrice F(t)','#7b1fa2'],['P','Poids P','#2e7d32'],['R','Réaction R','#0277bd']];
+let S={t:0,x:0,v:0,run:false,fin:false,E0:0},T=[],X=[],V=[],FA=[],EN=[],PK=[0,0,0,0],cnt=0,showF=false;
+const mode=()=>document.querySelector('input[name=md]:checked').value;
+const Fext=t=>mode()=='f'?P.Fm*Math.sin(P.w*t):0;
+const en=()=>.5*P.M*S.v*S.v+.5*P.K*S.x*S.x;
+const acc=(t,x,v)=>(-P.K*x-P.h*v+Fext(t))/P.M;
+/* paramètres */
+SP.forEach(([k,l,u,a,b,s])=>{$('ps').insertAdjacentHTML('beforeend',`<div class=pr><label>${l} (${u})</label><input type=number step=any id=n${k}><input type=range id=r${k} min=${a} max=${b} step=${s}></div>`);
+ const f=e=>{const v=parseFloat(e.target.value);if(!isNaN(v))setP(k,v,e.target)};$('n'+k).oninput=$('r'+k).oninput=f});
+function setP(k,v,src){const s=SP.find(a=>a[0]==k);v=Math.min(s[4],Math.max(s[3],v));P[k]=v;
+ if($('n'+k)!==src)$('n'+k).value=v;if($('r'+k)!==src)$('r'+k).value=v;
+ if((k=='x0'||k=='v0')&&!S.run&&S.t==0)reset()}
+FC.forEach(([k,l,c],i)=>$('fc').insertAdjacentHTML('beforeend',`<label style="color:${c};font-weight:600;display:block"><input type=checkbox id=fk${i} checked> ${l}</label>`));
+/* simulation */
+function rec(){const e=en(),f=Fext(S.t);T.push(S.t);X.push(S.x);V.push(S.v);FA.push(f);EN.push(e);[S.x,S.v,f,e].forEach((a,i)=>PK[i]=Math.max(PK[i],Math.abs(a)))}
+function reset(){S.t=0;S.x=P.x0;S.v=P.v0;S.run=false;S.fin=false;T=[];X=[];V=[];FA=[];EN=[];PK=[0,0,0,0];cnt=0;S.E0=en();rec()}
+function step(dt){const{t,x,v}=S,k1x=v,k1v=acc(t,x,v),k2x=v+dt/2*k1v,k2v=acc(t+dt/2,x+dt/2*k1x,k2x),k3x=v+dt/2*k2v,k3v=acc(t+dt/2,x+dt/2*k2x,k3x),k4x=v+dt*k3v,k4v=acc(t+dt,x+dt*k3x,k4x);
+ S.x+=dt/6*(k1x+2*k2x+2*k3x+k4x);S.v+=dt/6*(k1v+2*k2v+2*k3v+k4v);S.t+=dt}
+const dur=()=>Math.max(1,+$('du').value||60);
+function reg(){const d=P.h*P.h-4*P.M*P.K;if(P.h<1e-12)return['non amorti (h = 0) : sinusoïdal',0];
+ if(Math.abs(d)<1e-6*4*P.M*P.K)return['critique (h² = 4MK)',2];return d<0?['pseudo-périodique (h² < 4MK)',1]:['apériodique (h² > 4MK)',3]}
+function amp(){if(mode()!='f')return null;const d=P.K-P.M*P.w*P.w,D=Math.hypot(d,P.h*P.w);if(D<1e-9)return null;return{Xm:P.Fm/D,p:Math.atan2(P.h*P.w,d)}}
+/* utilitaires dessin */
+const dg=a=>{let d=a*180/PI;d=((d+180)%360+360)%360-180;return d.toFixed(0)+'°'},s2=v=>v.toFixed(2).replace('-','−');
+function tv(g,s,x,y,c,f){g.font=`${f}px system-ui`;g.textAlign='left';g.fillStyle=g.strokeStyle=c;g.lineWidth=Math.max(1,f/12);let cx=x;const ps=s.split('\u20D7');
+ ps.forEach((p,i)=>{g.fillText(p,cx,y);cx+=g.measureText(p).width;if(i<ps.length-1){const w=g.measureText(p.slice(-1)).width,ya=y-f*.85;g.beginPath();g.moveTo(cx-w,ya);g.lineTo(cx,ya);g.moveTo(cx,ya);g.lineTo(cx-f*.18,ya-f*.1);g.moveTo(cx,ya);g.lineTo(cx-f*.18,ya+f*.1);g.stroke()}})}
+function arr(g,x1,y1,x2,y2,col,w=3,hs=11){g.strokeStyle=g.fillStyle=col;g.lineWidth=w;g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();const L=Math.hypot(x2-x1,y2-y1);if(L<2)return;
+ const a=Math.atan2(y2-y1,x2-x1),s=Math.min(hs,L*.5);g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-s*Math.cos(a-.4),y2-s*Math.sin(a-.4));g.lineTo(x2-s*Math.cos(a+.4),y2-s*Math.sin(a+.4));g.closePath();g.fill()}
+function tx(g,s,x,y,c,f,al='left'){g.fillStyle=c;g.font=`${f}px system-ui`;g.textAlign=al;g.fillText(s,x,y)}
+function wm(g,W,H,col,fs){g.save();g.globalAlpha=.1;g.fillStyle=col;g.font=`bold ${fs*3.5}px system-ui`;g.textAlign='center';g.translate(W/2,H/2);g.rotate(-.2);g.fillText('FERJANI RAFIK',0,0);g.restore();
+ g.save();g.globalAlpha=.7;tx(g,'LABO PHYSIQUE – FERJANI RAFIK',W-fs*.5,H-fs*.4,col,fs*.8,'right');g.restore()}
+function fit(c,ar){const d=Math.min(devicePixelRatio||1,2),w=c.clientWidth;if(!w)return 0;c.style.height=w*ar+'px';const W=Math.round(w*d),H=Math.round(w*ar*d);if(c.width!=W||c.height!=H){c.width=W;c.height=H}return[W,H]}
+/* schéma du montage (coordonnées logiques 900×440) */
+function drawSetup(c,W){const g=c.getContext('2d');g.setTransform(W/1180,0,0,W/1180,0,0);g.fillStyle='#fff';g.fillRect(0,0,1180,440);
+ const x=S.x,v=S.v,f=mode()=='f',cl=Math.max(-200,Math.min(200,x*400)),cx=480+cl,bl=cx-45,Fe=Fext(S.t);
+ g.lineWidth=2;g.strokeStyle='#37474f';g.beginPath();g.moveTo(20,300);g.lineTo(1160,300);g.stroke();
+ for(let i=20;i<1160;i+=14){g.beginPath();g.moveTo(i,300);g.lineTo(i-8,310);g.stroke()}
+ g.fillStyle='#cfd8dc';g.fillRect(30,130,32,170);g.strokeRect(30,130,32,170);tx(g,'Support fixe',18,122,'#37474f',13);
+ /* frottement fluide */
+ const pp=Math.max(78,Math.min(192,135+cl*.25));g.strokeStyle='#ef6c00';g.lineWidth=3;g.beginPath();g.moveTo(62,205);g.lineTo(70,205);g.stroke();g.strokeRect(70,194,130,22);
+ g.beginPath();g.moveTo(pp,197);g.lineTo(pp,213);g.moveTo(pp,205);g.lineTo(bl,205);g.stroke();tx(g,'Frottement fluide (h)',70,184,'#ef6c00',13);
+ /* ressort */
+ const n=12,L=bl-62-40;g.strokeStyle='#455a64';g.lineWidth=2.5;g.beginPath();g.moveTo(62,262);g.lineTo(82,262);for(let i=1;i<2*n;i++)g.lineTo(82+L*i/(2*n),262+(i%2?-16:16));g.lineTo(82+L,262);g.lineTo(bl,262);g.stroke();
+ tx(g,'Ressort (K)',90,322,'#455a64',13);
+ /* moteur (masqué en oscillations libres) */
+ if(f){g.fillStyle='#455a64';g.fillRect(790,200,90,100);tx(g,'Moteur',835,222,'#fff',13,'center');tx(g,"d'excitation",835,238,'#fff',11,'center');
+ const th=f?P.w*S.t:0;g.fillStyle='#eceff1';g.strokeStyle='#263238';g.lineWidth=2;g.beginPath();g.arc(790,250,24,0,2*PI);g.fill();g.stroke();
+ const px=790+14*Math.cos(th),py=250+14*Math.sin(th);g.strokeStyle='#6d4c41';g.lineWidth=4;g.beginPath();g.moveTo(px,py);g.lineTo(cx+45,240);g.stroke();
+ g.fillStyle='#d84315';g.beginPath();g.arc(px,py,5,0,2*PI);g.fill();tx(g,'ON',835,255,'#fff',14,'center')}
+ /* solide */
+ g.fillStyle='#90a4ae';g.strokeStyle='#263238';g.lineWidth=2;g.fillRect(cx-45,180,90,120);g.strokeRect(cx-45,180,90,120);tx(g,'Solide M',cx,296,'#102027',13,'center');
+ /* repères */
+ g.setLineDash([5,4]);g.strokeStyle='#757575';g.lineWidth=1.5;g.beginPath();g.moveTo(480,150);g.lineTo(480,334);g.stroke();g.setLineDash([]);
+ tx(g,'O',474,320,'#212121',14,'right');if(Math.abs(cl)>2)arr(g,480,330,cx,330,'#0d47a1',2,8);
+ tx(g,`x = ${x.toFixed(3)} m`,(480+cx)/2,346,'#0d47a1',13,'center');arr(g,480,362,700,362,'#212121',2,9);tx(g,'Ox (sens positif)',706,366,'#212121',13);
+ tx(g,'Plan horizontal',640,322,'#37474f',13);
+ if(Math.abs(v)>.01){const l=Math.sign(v)*Math.min(70,Math.abs(v)*60);arr(g,cx+10,168,cx+10+l,168,'#00897b',3,9);tx(g,`v = ${v.toFixed(2)} m/s`,cx+14,160,'#00897b',12)}drawDrum(g,cx,cl);
+ /* forces */
+ if(showF){const sc=+$('fz').value,Pw=P.M*9.81,cp=l=>Math.sign(l)*Math.min(170,Math.abs(l)),fv=[-P.K*x,-P.h*v,Fe],nm=['Fr','f','F','P','R'],ys=[216,240,264],on=i=>$('fk'+i).checked;
+  fv.forEach((F,i)=>{if(!on(i))return;const l=cp(F*sc);g.fillStyle=FC[i][2];g.beginPath();g.arc(cx,ys[i],3.5,0,2*PI);g.fill();arr(g,cx,ys[i],cx+l,ys[i],FC[i][2],3.5);tx(g,nm[i],cx+l+(l>=0?6:-6),ys[i]-6,FC[i][2],14,l>=0?'left':'right')});
+  if(on(3)){const l=cp(Pw*sc);arr(g,cx-22,240,cx-22,240+l,FC[3][2],3.5);tx(g,'P',cx-30,240+l+14,FC[3][2],14,'right')}
+  if(on(4)){const l=cp(Pw*sc);arr(g,cx+22,240,cx+22,240-l,FC[4][2],3.5);tx(g,'R',cx+30,240-l-4,FC[4][2],14)}
+  const Lg=[`Fr = −Kx = ${s2(fv[0])} N  ‖F⃗r‖ = ${Math.abs(fv[0]).toFixed(2)} N`,`f = −hv = ${s2(fv[1])} N  ‖f⃗‖ = ${Math.abs(fv[1]).toFixed(2)} N`,`F = ${s2(fv[2])} N  ‖F⃗‖ = ${Math.abs(fv[2]).toFixed(2)} N`,`P = Mg = ${Pw.toFixed(2)} N  (vertical, ↓)`,`R = ${Pw.toFixed(2)} N  (vertical, ↑)`];
+  Lg.forEach((s,i)=>{if(on(i))tv(g,s,20+(i/3|0)*450,396+(i%3)*16,FC[i][2],13)})}
+ tx(g,`M x'' + h x' + K x = ${f?'Fm sin(ωt)':'0'}     t = ${S.t.toFixed(2)} s`,20,24,'#0d47a1',16);
+ tx(g,`M=${P.M.toFixed(2)} kg · K=${P.K.toFixed(1)} N/m · h=${P.h.toFixed(2)} N·s/m`+(f?` · Fm=${P.Fm.toFixed(1)} N · ω=${P.w.toFixed(2)} rad/s`:''),20,44,'#455a64',13);
+ if(Math.abs(x*400)>200)tx(g,'échelle d\'affichage saturée',20,80,'#c62828',12);wm(g,1180,440,'#0d47a1',14)}
+/* cylindre enregistreur (oscillographe) : x(t) à côté du montage, avec axes */
+function drawDrum(g,cx,cl){const xc=1035,R=56,yc=130,x0=900,x1=1170,Tv=Math.min(8,Math.max(2,+$('tw').value||10)),Om=PI/2/Tv,xp=xc+cl*.65,AX='#455a64';
+ g.strokeStyle='#37474f';g.lineWidth=3;[893,1174].forEach(a=>{g.beginPath();g.moveTo(a,yc+R-4);g.lineTo(a,300);g.stroke()});
+ const gr=g.createLinearGradient(0,yc-R,0,yc+R);gr.addColorStop(0,'#cfd8dc');gr.addColorStop(.45,'#fffde7');gr.addColorStop(1,'#b0bec5');
+ g.fillStyle=gr;g.strokeStyle='#263238';g.lineWidth=2;g.fillRect(x0,yc-R,x1-x0,2*R);g.beginPath();g.moveTo(x0,yc-R);g.lineTo(x1,yc-R);g.moveTo(x0,yc+R);g.lineTo(x1,yc+R);g.stroke();
+ g.fillStyle='#90a4ae';g.beginPath();g.ellipse(x1,yc,12,R,0,0,2*PI);g.fill();g.stroke();g.beginPath();g.ellipse(x0,yc,12,R,0,0,2*PI);g.stroke();
+ for(let k=-5;k<=5;k++){g.strokeStyle=k?'#cfd8dc':'#78909c';g.lineWidth=k?.7:1.3;g.beginPath();g.moveTo(xc+26*k,yc-R);g.lineTo(xc+26*k,yc+R);g.stroke()}
+ for(let n=Math.floor(S.t-Tv)-1;n<=Math.ceil(S.t+Tv)+1;n++){const a=Om*(S.t-n);if(Math.abs(a)>=PI/2)continue;const y=yc+R*Math.sin(a);g.lineWidth=1;g.strokeStyle='#90a4ae';g.beginPath();g.moveTo(x0,y);g.lineTo(x1,y);g.stroke();
+  if(a>=0&&n>=0){g.strokeStyle=AX;g.beginPath();g.moveTo(x0-30,y);g.lineTo(x0-23,y);g.stroke();if(n%2==0)tx(g,''+n,x0-33,y+3,AX,10,'right')}}
+ arr(g,x0-26,yc,x0-26,yc+R+3,AX,1.5,6);tx(g,'t (s) ↓',x0-30,yc+R+17,AX,11,'right');
+ g.strokeStyle='#1565c0';g.lineWidth=2.5;g.beginPath();let st=0;for(let i=T.length-1;i>=0;i--){const tau=S.t-T[i];if(tau>Tv)break;const y=yc+R*Math.sin(Om*tau),xx=xc+Math.max(-200,Math.min(200,X[i]*400))*.65;st?g.lineTo(xx,y):g.moveTo(xx,y);st=1}g.stroke();
+ g.strokeStyle=AX;g.lineWidth=1.3;g.beginPath();g.moveTo(x0,yc+R+10);g.lineTo(x1-8,yc+R+10);for(let k=-5;k<=5;k++){g.moveTo(xc+26*k,yc+R+10);g.lineTo(xc+26*k,yc+R+14)}g.stroke();arr(g,x1-22,yc+R+10,x1+4,yc+R+10,AX,1.3,6);
+ for(let k=-5;k<=5;k++)tx(g,(k/10).toFixed(1).replace('-','−'),xc+26*k,yc+R+25,AX,9,'center');tx(g,'x (m)',x1,yc+R+37,AX,11,'right');
+ g.strokeStyle='#6d4c41';g.lineWidth=4;g.beginPath();g.moveTo(cx,180);g.lineTo(cx,62);g.lineTo(xp,62);g.lineTo(xp,yc);g.stroke();g.fillStyle='#d32f2f';g.beginPath();g.arc(xp,yc,4.5,0,2*PI);g.fill();
+ tx(g,'Cylindre enregistreur : x(t)',xc,yc+R+52,'#1565c0',13,'center');tx(g,'papier tournant · stylet lié au solide',xc,yc+R+66,'#455a64',11,'center')}
+function drawDrumImg(c,W,H){const g=c.getContext('2d'),k=W/370;g.setTransform(1,0,0,1,0,0);g.fillStyle='#fff';g.fillRect(0,0,W,H);g.setTransform(k,0,0,k,-820*k,-30*k);
+ const cl=Math.max(-200,Math.min(200,S.x*400)),f=mode()=='f';drawDrum(g,480+cl,cl);tx(g,'Oscillographe à cylindre : x(t)',1005,46,'#0d47a1',15,'center');
+ tx(g,`M=${P.M.toFixed(2)} kg · K=${P.K.toFixed(1)} N/m · h=${P.h.toFixed(2)} N·s/m`,825,270,'#455a64',11);if(f)tx(g,`Fm=${P.Fm.toFixed(1)} N · ω=${P.w.toFixed(2)} rad/s`,825,283,'#455a64',11);
+ g.save();g.globalAlpha=.1;g.fillStyle='#0d47a1';g.font='bold 44px system-ui';g.textAlign='center';g.translate(1005,150);g.rotate(-.2);g.fillText('FERJANI RAFIK',0,0);g.restore();tx(g,'LABO PHYSIQUE – FERJANI RAFIK',1186,287,'#0d47a1',10,'right')}
+/* enregistreur */
+const chs=()=>[['x(t)','m','#4fc3f7',X],['v(t)','m/s','#81c784',V],['F(t)','N','#ce93d8',FA],['Em(t)','J','#ff8a65',EN]];
+function lb(a,v){let l=0,h=a.length;while(l<h){const m=l+h>>1;a[m]<v?l=m+1:h=m}return l}
+function drawScope(c,W,H){const g=c.getContext('2d'),fs=Math.max(10,W/75),Tw=Math.max(1,+$('tw').value||10),zm=+$('zm').value;g.setTransform(1,0,0,1,0,0);g.fillStyle='#0f1b2d';g.fillRect(0,0,W,H);
+ const ws=(+$('sc').value)*Math.max(0,S.t-Tw),all=chs(),act=all.map((a,i)=>i).filter(i=>$('ch'+i).checked),sup=$('su').checked,n=sup?1:act.length;
+ if(!n){tx(g,'Aucune voie sélectionnée',W/2,H/2,'#fff',fs*1.3,'center');return}
+ const ml=fs*5.5,mr=fs,mt=fs*1.6,mb=fs*2.6,pw=W-ml-mr,sh=(H-mt-mb)/n,gap=fs*.4,pos=(k,i)=>0;g.font=`${fs}px system-ui`;
+ for(let s=0;s<n;s++){const y0=mt+s*sh,y1=y0+sh-gap,ym=(y0+y1)/2;g.fillStyle='#14263f';g.fillRect(ml,y0,pw,y1-y0);g.strokeStyle='#2c4468';g.lineWidth=1;g.beginPath();
+  for(let i=0;i<=10;i++){const xx=ml+pw*i/10;g.moveTo(xx,y0);g.lineTo(xx,y1)}for(let i=0;i<=4;i++){const yy=y0+(y1-y0)*i/4;g.moveTo(ml,yy);g.lineTo(ml+pw,yy)}g.stroke();
+  g.strokeStyle='#5d7aa5';g.beginPath();g.moveTo(ml,ym);g.lineTo(ml+pw,ym);g.stroke();
+  (sup?act:[act[s]]).forEach((k,j)=>{const[nm,u,col,arr]=all[k],ref=(PK[k]>1e-9?PK[k]:1)*1.1/zm,E=k==3,yy=v=>E?y1-v/ref*(y1-y0):ym-v/ref*(y1-y0)/2;
+   tx(g,'+'+ref.toPrecision(2),ml-4,E?y0+fs:y0+fs+j*fs,col,fs*.9,'right');tx(g,E?'0':'−'+ref.toPrecision(2),ml-4,E?y1:y1-1-j*fs,col,fs*.9,'right');tx(g,`${nm} (${u})`,ml+4,y0+fs+j*fs*1.1,col,fs);
+   g.strokeStyle=col;g.lineWidth=Math.max(1.5,fs/7);g.beginPath();let st=0;for(let i=Math.max(0,lb(T,ws)-1);i<T.length&&T[i]<=ws+Tw+.01;i++){const px=ml+(T[i]-ws)/Tw*pw,py=yy(arr[i]);st?g.lineTo(px,py):g.moveTo(px,py);st=1}g.stroke();
+   const A=amp();if(k==0&&A&&$('pm').checked){g.save();g.setLineDash([fs/2,fs/2]);g.strokeStyle='#fff';g.lineWidth=1.2;g.beginPath();for(let m=0;m<=pw;m+=2){const t=ws+Tw*m/pw,py=yy(A.Xm*Math.sin(P.w*t-A.p));m?g.lineTo(ml+m,py):g.moveTo(ml+m,py)}g.stroke();g.restore()}});
+ }
+ for(let i=0;i<=10;i++)tx(g,(ws+Tw*i/10).toFixed(Tw>=20?0:1),ml+pw*i/10,H-mb+fs*1.1,'#cfd8dc',fs*.9,'center');tx(g,'t (s)',W-mr,H-mb+fs*2.2,'#cfd8dc',fs,'right');
+ if(sup)tx(g,'voies superposées : chaque courbe est normalisée par sa propre échelle',ml,fs,'#b0bec5',fs*.9);
+ const u=+$('cu').value,tc=ws+u*Tw,xc=ml+u*pw;g.strokeStyle='#ffeb3b';g.lineWidth=1;g.beginPath();g.moveTo(xc,mt);g.lineTo(xc,H-mb);g.stroke();
+ const ix=Math.min(lb(T,tc),T.length-1);$('cr').textContent=`Curseur : t = ${T[ix].toFixed(3)} s | x = ${X[ix].toFixed(4)} m | v = ${V[ix].toFixed(4)} m/s | F = ${FA[ix].toFixed(3)} N | Em = ${EN[ix].toFixed(4)} J`;
+ wm(g,W,H,'#fff',fs)}
+/* Fresnel : rendu générique (vecteurs bout à bout, résultante en pointillé) */
+function frame(c,W,H,sp){const g=c.getContext('2d'),fs=Math.max(10,W/40);g.setTransform(1,0,0,1,0,0);g.fillStyle='#fff';g.fillRect(0,0,W,H);
+ if(!sp){const f=mode()=='f';tx(g,f?'Amplitude infinie (résonance sans amortissement)':'Défini en régime forcé permanent :',W/2,H/2,'#37474f',fs*1.1,'center');if(!f)tx(g,'choisir « Oscillations forcées »',W/2,H/2+fs*1.5,'#37474f',fs*1.1,'center');wm(g,W,H,'#0d47a1',fs);return}
+ const pol=(a,r)=>[r*Math.cos(a),r*Math.sin(a)];let pt=[[0,0]];sp.V.forEach(([,r,a])=>{const q=pol(a,r),l=pt[pt.length-1];pt.push([l[0]+q[0],l[1]+q[1]])});
+ const xs=pt.map(a=>a[0]),ys=pt.map(a=>a[1]),mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys),m=fs*2.2,top=fs*7.5,bw=Math.max(mxx-mnx,1e-9),bh=Math.max(mxy-mny,1e-9),
+ sc=Math.min((W-2*m)/bw,(H-m-top)/bh),ox=m+(W-2*m-bw*sc)/2-mnx*sc,oy=H-m-(H-m-top-bh*sc)/2+mny*sc,X_=q=>ox+q*sc,Y_=q=>oy-q*sc;
+ g.strokeStyle='#b0bec5';g.lineWidth=1;g.beginPath();g.moveTo(m,oy);g.lineTo(W-m,oy);g.moveTo(ox,top);g.lineTo(ox,H-m);g.stroke();tx(g,'réf. phase (F)',m,oy-4,'#78909c',fs*.8);
+ sp.V.forEach(([nm,r,a,col],i)=>{const q0=pt[i],q1=pt[i+1];if($('pj').checked){g.save();g.setLineDash([4,4]);g.strokeStyle=col;g.lineWidth=1.2;g.beginPath();g.moveTo(X_(q0[0]),Y_(q0[1]));g.lineTo(X_(q1[0]),Y_(q0[1]));g.lineTo(X_(q1[0]),Y_(q1[1]));g.stroke();g.restore()}
+  arr(g,X_(q0[0]),Y_(q0[1]),X_(q1[0]),Y_(q1[1]),col,Math.max(2,fs/5),fs*.8);tx(g,nm,X_((q0[0]+q1[0])/2)+fs*.3,Y_((q0[1]+q1[1])/2)-fs*.4,col,fs*.9)});
+ const e=pt[pt.length-1];g.save();g.setLineDash([8,5]);arr(g,X_(0),Y_(0),X_(e[0]),Y_(e[1]),sp.R[3],Math.max(2,fs/6),fs*.8);g.restore();tx(g,sp.R[0],X_(e[0]/2)-fs*.3,Y_(e[1]/2)+fs*1.2,sp.R[3],fs*.9,'right');
+ sp.L.forEach(([t,col],i)=>tv(g,t,fs*.6,fs*1.3+i*fs*1.25,col,fs));tx(g,'Amplitudes de Fresnel ≠ valeurs instantanées',fs*.6,H-fs*.4,'#78909c',fs*.8);wm(g,W,H,'#0d47a1',fs)}
+function specX(){const A=amp();if(!A)return null;const{Xm,p}=A,{K,M,h,w,Fm}=P,N=v=>v.toFixed(2);
+ return{V:[['−Kx',K*Xm,PI-p,'#e53935'],['−hv',h*w*Xm,-PI/2-p,'#fb8c00'],['F',Fm,0,'#8e24aa']],R:['Mx″',M*w*w*Xm,PI-p,'#0277bd'],
+ L:[[`‖F⃗‖ = Fm = ${N(Fm)} N ; 0°`,'#8e24aa'],[`‖−Kx⃗‖ = KXm = ${N(K*Xm)} N ; ${dg(PI-p)}`,'#e53935'],[`‖−hv⃗‖ = hωXm = ${N(h*w*Xm)} N ; ${dg(-PI/2-p)}`,'#fb8c00'],[`‖Mx⃗″‖ = Mω²Xm = ${N(M*w*w*Xm)} N ; ${dg(PI-p)} (pointillé)`,'#0277bd'],[`φ = ${dg(p)} : x en retard sur F`,'#37474f']]}}
+function specV(){if(mode()!='f')return null;const{K,M,h,w,Fm}=P,q=M*w-K/w,Z=Math.hypot(h,q);if(Z<1e-9)return null;const Vm=Fm/Z,pv=Math.atan2(-q,h),N=v=>v.toFixed(2);
+ return{V:[['hv',h*Vm,pv,'#fb8c00'],['M dv/dt',M*w*Vm,pv+PI/2,'#e53935'],['K∫v dt',K*Vm/w,pv-PI/2,'#43a047']],R:['F',Fm,0,'#8e24aa'],
+ L:[[`‖F⃗‖ = Fm = ${N(Fm)} N ; 0° (pointillé)`,'#8e24aa'],[`‖hv⃗‖ = hVm = ${N(h*Vm)} N ; ${dg(pv)}`,'#fb8c00'],[`‖M dv⃗/dt‖ = MωVm = ${N(M*w*Vm)} N ; ${dg(pv+PI/2)}`,'#e53935'],[`‖K∫v⃗ dt‖ = KVm/ω = ${N(K*Vm/w)} N ; ${dg(pv-PI/2)}`,'#43a047'],[`φv = ${dg(pv)} ; Vm = ${Vm.toFixed(3)} m/s ; Z = ${N(Z)} N·s/m`,'#37474f']]}}
+const drawFr=(c,W,H)=>frame(c,W,H,specX()),drawFrV=(c,W,H)=>frame(c,W,H,specV());
+/* déphasage */
+function phase(){const A=amp();if(!A){$('ph').textContent=mode()=='f'?'Xm infini : déphasage non défini (h = 0 et ω = ω₀).':'Choisir le mode « Oscillations forcées ».';return}
+ const p=A.p,d=p-PI/2,a=Math.abs(d),deg=x=>(x*180/PI).toFixed(1)+'°',e=.0087;let c,i;
+ c=a<e?'EN PHASE':Math.abs(a-PI/2)<e?'EN QUADRATURE':Math.abs(a-PI)<e?'EN OPPOSITION DE PHASE':'déphasage quelconque';
+ i=a<e?'Résonance de vitesse (ω = ω₀) : F compense exactement le frottement, Fm = h·Vm.':d<0?'ω < ω₀ : la raideur domine ; v est en avance sur F.':'ω > ω₀ : l\'inertie domine ; F est en avance sur v.';
+ $('ph').textContent=`Conventions : F = Fm sin(ωt) (phase 0)\nx = Xm sin(ωt − φ) ; v = Xm ω sin(ωt − φ + π/2)\nφ(F/x) = φ = ${p.toFixed(3)} rad = ${deg(p)} (x en retard sur F)\nφ(F/v) = φ − π/2 = ${d.toFixed(3)} rad = ${deg(d)}\nCaractère : ${c}\n${i}`}
+/* résultats */
+function res(){const{M,K,h,w}=P,w0=Math.sqrt(K/M),[rg,rc]=reg(),f=mode()=='f',A=amp();
+ let s=`ω₀ = √(K/M) = ${w0.toFixed(3)} rad/s\nT₀ = 2π/ω₀ = ${(2*PI/w0).toFixed(3)} s (si h = 0)\nRégime libre : ${rg}\n`;
+ if(rc==1){const wp=Math.sqrt(w0*w0-(h/2/M)**2),Tp=2*PI/wp;s+=`ωp = ${wp.toFixed(3)} rad/s\nPseudo-période T = ${Tp.toFixed(3)} s\nDécrément δ = hT/2M = ${(h*Tp/2/M).toFixed(3)}\n`}
+ if(f){s+=`ω = ${w.toFixed(3)} rad/s ; N = ${(w/2/PI).toFixed(3)} Hz\n`;if(A)s+=`Xm = ${A.Xm.toFixed(4)} m\nφ(F/x) = ${A.p.toFixed(3)} rad\nφ(F/v) = ${(A.p-PI/2).toFixed(3)} rad\n`;if(h>0)s+=`Transitoire restant ≈ e^(−ht/2M) = ${(100*Math.exp(-h*S.t/2/M)).toFixed(1)} %\n`}
+ const ec=.5*M*S.v*S.v,ep=.5*K*S.x*S.x;
+ s+=`— instant —\nt = ${S.t.toFixed(3)} s\nx = ${S.x.toFixed(4)} m\nv = ${S.v.toFixed(4)} m/s\nF = ${Fext(S.t).toFixed(3)} N\nEc = ${ec.toFixed(4)} J ; Ep = ${ep.toFixed(4)} J\nEm = ${(ec+ep).toFixed(4)} J`+(S.E0>0&&!f?` (${(100*(ec+ep)/S.E0).toFixed(2)} % de E₀)`:'')+`\nStatut : ${S.fin?'arrêté':S.run?'en cours':'en attente'}`;$('rs').textContent=s}
+/* boucle */
+let last=0,fr=0;
+function loop(ts){const dtr=Math.min(.05,(ts-last)/1000||0);last=ts;
+ if(S.run){const nn=Math.min(Math.ceil(dtr*$('sp').value/DT),600);for(let i=0;i<nn;i++){step(DT);if(++cnt%5==0)rec();if(S.t>=dur()){S.run=false;S.fin=true;break}}$('sc').value=1}
+ let q=fit($('c1'),440/1180);if(q)drawSetup($('c1'),q[0]);
+ if($('cs').offsetParent&&(q=fit($('c2'),.45)))drawScope($('c2'),q[0],q[1]);
+ if($('cf').offsetParent&&(q=fit($('c3'),.62)))drawFr($('c3'),q[0],q[1]);
+ if($('cf2').offsetParent&&(q=fit($('c4'),.62)))drawFrV($('c4'),q[0],q[1]);
+ if(fr++%4==0)res();requestAnimationFrame(loop)}
+/* actions */
+function dl(fn,W,H,name){const c=document.createElement('canvas');c.width=W;c.height=H;fn(c,W,H);c.toBlob(b=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)},'image/png')}
+const start=()=>{reset();S.run=true};
+$('b1').onclick=start;$('b2').onclick=()=>{S.run=false};$('b3').onclick=()=>{if(!S.fin)S.run=true};$('b4').onclick=()=>{S.run=false;S.fin=true};$('b5').onclick=reset;
+$('bsF').onclick=()=>{showF=true;for(let i=0;i<5;i++)$('fk'+i).checked=true};$('bhF').onclick=()=>{showF=false};
+$('bph').onclick=phase;$('bD').onclick=()=>dl(drawSetup,3540,1320,'schema_montage_FERJANI_RAFIK.png');
+$('dsc').onclick=()=>dl(drawScope,2400,1080,'oscillogramme_FERJANI_RAFIK.png');$('dfr').onclick=()=>dl(drawFr,1800,1440,'fresnel_x_FERJANI_RAFIK.png');$('dfr2').onclick=()=>dl(drawFrV,1800,1440,'fresnel_v_FERJANI_RAFIK.png');$('bDr').onclick=()=>dl(drawDrumImg,2960,2096,'oscillographe_cylindre_FERJANI_RAFIK.png');
+const tg=(id,b)=>$(b).onclick=()=>{const e=$(id);e.style.display=e.style.display=='none'?'':'none';if(e.style.display=='')e.scrollIntoView({behavior:'smooth'})};tg('cs','bO');$('bF').onclick=()=>{const h=$('cf').style.display=='none';['cf','cf2'].forEach(i=>$(i).style.display=h?'':'none');if(h)$('cf').scrollIntoView({behavior:'smooth'})};
+function setMode(m){document.querySelector(`input[name=md][value=${m}]`).checked=true}
+const EX=[{h:0,Fm:0,m:'l',tw:10},{h:1.5,Fm:0,m:'l',tw:10},{h:2*Math.sqrt(20),Fm:0,m:'l',tw:6},{h:.5,Fm:2,w:2,x0:0,m:'f',tw:25},{h:1,Fm:1,w:Math.sqrt(20),x0:0,m:'f',tw:20},{h:1,Fm:2,w:3,x0:0,m:'f',tw:10,ph:1}];
+$('ex').onchange=e=>{if(e.target.value==='')return;const x=EX[+e.target.value];S.run=false;SP.forEach(([k])=>setP(k,x[k]!==undefined?x[k]:B[k]));setMode(x.m);$('tw').value=x.tw;$('du').value=60;reset();start();if(x.ph)phase();else $('ph').textContent='';e.target.value=''};
+$('bR').onclick=()=>{S.run=false;SP.forEach(([k])=>setP(k,B[k]));setMode('l');$('tw').value=10;$('du').value=60;$('zm').value=1;$('fz').value=8;$('sp').value=1;$('sc').value=1;$('ph').textContent='';reset()};
+SP.forEach(([k])=>setP(k,B[k]));reset();requestAnimationFrame(loop);
+</script></body></html>
